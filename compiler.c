@@ -121,7 +121,7 @@ Token* tokenize()
       p++;
       continue;
     }
-    else if (*p == '+' || *p == '-')
+    else if (strchr("+-*/()", *p))
     {
       cur = new_token(TK_RESERVED, cur, p++);
       continue;
@@ -177,7 +177,7 @@ Node* mul()
   for (;;)
   {
     if (consume('*'))
-      node = new_node(ND_ADD, node, primary());
+      node = new_node(ND_MUL, node, primary());
     else if (consume('/'))
       node = new_node(ND_DIV, node, primary());
     else
@@ -210,8 +210,8 @@ void gen(Node* node)
   gen(node->lhs);
   gen(node->rhs);
 
-  printf("\npop rdi\n");
-  printf("\npop rax\n");
+  printf("\tpop rdi\n");
+  printf("\tpop rax\n");
 
   switch (node->kind)
   {
@@ -244,25 +244,15 @@ int main(int argc, char** argv)
 
   user_input = argv[1];
   token = tokenize();
+  Node* node = expr();
 
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
   printf("main:\n");
 
-  printf("\tmov rax, %d\n", expect_number());
+  gen(node);
 
-  while (!at_eof())
-  {
-    if (consume('+'))
-    {
-      printf("\tadd rax, %d\n", expect_number());
-    }
-    else
-    {
-      expect('-');
-      printf("\tsub rax, %d\n", expect_number());
-    }
-  }
+  printf("\tpop rax\n");
   printf("\tret\n");
 
   return 0;
