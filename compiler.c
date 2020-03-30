@@ -25,10 +25,26 @@ struct Token
 
 Token* token;
 
-void error(char* fmt, ...)
+/* void error(char* fmt, ...) */
+/* { */
+  /* va_list ap; */
+  /* va_start(ap, fmt); */
+  /* vfprintf(stderr, fmt, ap); */
+  /* fprintf(stderr, "\n"); */
+  /* exit(1); */
+/* } */
+
+char* user_input;
+
+void error_at(char* loc, char* fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
+
+  int pos = loc - user_input;
+  fprintf(stderr, "%s\n", user_input);
+  fprintf(stderr, "%*s\n", pos, "");
+  fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
   exit(1);
@@ -45,14 +61,14 @@ bool consume(char op)
 void expect(char op)
 {
   if (token->kind != TK_RESERVED || token->str[0] != op)
-    error("It is not '%c'", op);
+    error_at(token->str, "expected '%c'", op);
   token = token->next;
 }
 
 int expect_number()
 {
   if (token->kind != TK_NUM)
-    error("It is'nt a number");
+    error_at(token->str, "It is'nt a number");
   int val = token->val;
   token = token->next;
   return val;
@@ -72,8 +88,9 @@ Token* new_token(TokenKind kind, Token* cur, char* str)
   return tok;
 }
 
-Token* tokenize(char* p)
+Token* tokenize()
 {
+  char* p = user_input;
   Token head;
   head.next = NULL;
   Token* cur = &head;
@@ -98,7 +115,7 @@ Token* tokenize(char* p)
     }
     else
     {
-      error("Clouldn't tokenize.");
+      error_at(p, "Clouldn't tokenize.");
     }
   }
   new_token(TK_EOF, cur, p);
@@ -113,7 +130,8 @@ int main(int argc, char** argv)
     exit(1);
   }
 
-  token = tokenize(argv[1]);
+  user_input = argv[1];
+  token = tokenize();
 
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
