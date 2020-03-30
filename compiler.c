@@ -199,6 +199,41 @@ Node* expr()
   }
 }
 
+void gen(Node* node)
+{
+  if (node->kind == ND_NUM)
+  {
+    printf("\tpush %d\n", node->val);
+    return;
+  }
+
+  gen(node->lhs);
+  gen(node->rhs);
+
+  printf("\npop rdi\n");
+  printf("\npop rax\n");
+
+  switch (node->kind)
+  {
+    case ND_ADD:
+      printf("\tadd rax, rdi\n");
+      break;
+    case ND_SUB:
+      printf("\tsub rax, rdi\n");
+      break;
+    case ND_MUL:
+      printf("\timul rax, rdi\n");
+      break;
+    case ND_DIV:
+      printf("\tcqo\n");
+      printf("\tidiv rdi\n");
+      break;
+    default:
+      error_at(user_input, "Invalid Node type.");
+  }
+  printf("\tpush rax\n");
+}
+
 int main(int argc, char** argv)
 {
   if (argc != 2)
