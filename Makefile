@@ -1,9 +1,13 @@
 CC       = gcc
 CC_FLAGS = --ansi -g3 -Wall
 TARGET   = tanacc
+SRCS     = $(wildcard *.c)
+OBJS     = $(SRCS:.c=.o)
 
-$(TARGET): compiler.c
-	$(CC) $(CC_FLAGS) -o $(TARGET) compiler.c
+$(TARGET): $(OBJS)
+	$(CC) $(CC_FLAGS) -o $(TARGET) $(OBJS)
+
+$(OBJS): tanacc.h
 
 test:
 	./test.bash
