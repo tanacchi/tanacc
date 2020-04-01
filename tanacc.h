@@ -6,6 +6,8 @@
 #include <string.h>
 
 
+// tokenizer
+
 typedef enum
 {
   TK_RESERVED,
@@ -24,7 +26,20 @@ struct Token
   int len;
 };
 
-Token* token;
+extern Token* token;
+extern char* user_input;
+
+void error_at(char* loc, char* fmt, ...);
+bool consume(char* op);
+void expect(char* op);
+int expect_number();
+bool at_eof();
+Token* new_token(TokenKind kind, Token* cur, char* str, int len);
+bool starts_with(char* p, char* q);
+Token* tokenize();
+
+
+// parser
 
 typedef enum
 {
@@ -48,3 +63,18 @@ struct Node
   Node* rhs;
   int val;
 };
+
+Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
+Node* new_node_num(int val);
+Node* primary();
+Node* unary();
+Node* mul();
+Node* add();
+Node* relational();
+Node* equelity();
+Node* expr();
+
+
+// generator
+
+void gen(Node* node);

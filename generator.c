@@ -1,3 +1,6 @@
+#include "tanacc.h"
+
+
 void gen(Node* node)
 {
   if (node->kind == ND_NUM)

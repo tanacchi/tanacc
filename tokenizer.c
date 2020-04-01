@@ -1,3 +1,7 @@
+#include "tanacc.h"
+
+
+Token* token;
 char* user_input;
 
 void error_at(char* loc, char* fmt, ...)

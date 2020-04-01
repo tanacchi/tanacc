@@ -1,3 +1,6 @@
+#include "tanacc.h"
+
+
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs)
 {
   Node* node = calloc(1, sizeof(Node));
@@ -14,8 +17,6 @@ Node* new_node_num(int val)
   node->val = val;
   return node;
 }
-
-Node* expr();
 
 Node* primary()
 {
