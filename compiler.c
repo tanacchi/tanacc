@@ -85,7 +85,7 @@ void expect(char* op)
   if (token->kind != TK_RESERVED ||
       strlen(op) != token->len ||
       memcmp(token->str, op, token->len))
-    error_at(token->str, "expected '%c'", op);
+    error_at(token->str, "expected '%s'", op);
   token = token->next;
 }
 
@@ -103,13 +103,19 @@ bool at_eof()
   return token->kind == TK_EOF;
 }
 
-Token* new_token(TokenKind kind, Token* cur, char* str)
+Token* new_token(TokenKind kind, Token* cur, char* str, int len)
 {
   Token* tok = calloc(1, sizeof(Token));
   tok->kind = kind;
   tok->str = str;
   cur->next = tok;
+  tok->len = len;
   return tok;
+}
+
+bool starts_with(char* p, char* q)
+{
+  return memcmp(p, q, strlen(q)) == 0;
 }
 
 Token* tokenize()
@@ -126,15 +132,24 @@ Token* tokenize()
       p++;
       continue;
     }
-    else if (strchr("+-*/()", *p))
+    else if (starts_with(p, "==") || starts_with(p, "!=") ||
+             starts_with(p, "<=") || starts_with(p, ">="))
     {
-      cur = new_token(TK_RESERVED, cur, p++);
+      cur = new_token(TK_RESERVED, cur, p, 2);
+      p += 2;
+      continue;
+    }
+    else if (strchr("+-*/()<>", *p))
+    {
+      cur = new_token(TK_RESERVED, cur, p++, 1);
       continue;
     }
     else if (isdigit(*p))
     {
-      cur = new_token(TK_NUM, cur, p);
+      cur = new_token(TK_NUM, cur, p, 0);
+      char* q = p;
       cur->val = strtol(p, &p, 10);
+      cur->len = p - q;
       continue;
     }
     else
@@ -142,7 +157,7 @@ Token* tokenize()
       error_at(p, "Clouldn't tokenize.");
     }
   }
-  new_token(TK_EOF, cur, p);
+  new_token(TK_EOF, cur, p, 0);
   return head.next;
 }
 
