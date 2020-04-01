@@ -53,6 +53,8 @@ typedef enum
   ND_LT,
   ND_LE,
   ND_NUM,
+  ND_ASSIGN,
+  ND_LVAR,
 } NodeKind;
 
 typedef struct Node Node;
@@ -63,6 +65,7 @@ struct Node
   Node* lhs;
   Node* rhs;
   int val;
+  int offset;
 };
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
@@ -73,8 +76,12 @@ Node* mul();
 Node* add();
 Node* relational();
 Node* equelity();
+Node* assign();
 Node* expr();
+Node* stmt();
+void program();
 
+extern Node* code[100];
 
 // generator
 
