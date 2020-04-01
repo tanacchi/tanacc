@@ -55,3 +55,15 @@ void gen(Node* node)
   }
   printf("\tpush rax\n");
 }
+
+void codegen(Node* node)
+{
+  printf(".intel_syntax noprefix\n");
+  printf(".global main\n");
+  printf("main:\n");
+
+  gen(node);
+
+  printf("\tpop rax\n");
+  printf("\tret\n");
+}

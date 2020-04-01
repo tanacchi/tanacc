@@ -12,15 +12,7 @@ int main(int argc, char** argv)
   user_input = argv[1];
   token = tokenize();
   Node* node = expr();
-
-  printf(".intel_syntax noprefix\n");
-  printf(".global main\n");
-  printf("main:\n");
-
-  gen(node);
-
-  printf("\tpop rax\n");
-  printf("\tret\n");
+  codegen(node);
 
   return 0;
 }

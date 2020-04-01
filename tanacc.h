@@ -86,3 +86,4 @@ extern Node* code[100];
 // generator
 
 void gen(Node* node);
+void codegen(Node* node);
