@@ -100,6 +100,11 @@ Token* tokenize()
       cur->len = p - q;
       continue;
     }
+    else if ('a' <= *p && *p <= 'z')
+    {
+      cur = new_token(TK_IDENT, cur, p++, 1);
+      continue;
+    }
     else
     {
       error_at(p, "Clouldn't tokenize.");
