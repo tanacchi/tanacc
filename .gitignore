@@ -1,3 +1,4 @@
 tanacc
 *.out
 *.s
+*.o
